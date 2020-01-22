@@ -1,0 +1,209 @@
+<template>
+	<main id="todolist">
+	<h1>
+		Lista de tarefas
+		<span>Passei Direto</span>
+	</h1>
+
+	<div v-if="todo.length">
+		<transition-group name="todolist" tag="ul">
+			<li v-for="item in todo" v-bind:class="item.done ? 'done' : ''" v-bind:key="item.id">
+				<span class="label">{{item.label}}</span>
+				<div class="actions">
+					<button class="btn-picto" type="button" v-on:click="markAsDoneOrUndone(item)" v-bind:aria-label="item.done ? 'Undone' : 'Done'" v-bind:title="item.done ? 'Undone' : 'Done'">
+						<i aria-hidden="true" class="material-icons">{{ item.done ? 'check_box' : 'check_box_outline_blank' }}</i>
+					</button>
+					<button class="btn-picto" type="button" v-on:click="deleteItemFromList(item)" aria-label="Delete" title="Delete">
+						<i aria-hidden="true" class="material-icons">delete</i>
+					</button>
+				</div>
+			</li>
+		</transition-group>
+	</div>
+	<p v-else class="emptylist">Sua lista está vazia</p>
+
+	<form name="newform" v-on:submit.prevent="addItem">
+		<label for="newitem">Adicionar item a lista de tarefas</label>
+		<input type="text" name="newitem" id="newitem" v-model="newitem">
+		<button type="submit">Adicionar</button>
+	</form>
+	</main>
+</template>
+
+<script>
+export default {
+  name: 'HelloWorld',
+  props: {
+    msg: String
+  },
+  data() {
+	return {
+		newitem:'',
+		sortByStatus:false,
+		todo: [
+			{ id:1, label: "Learn VueJs", done: true },
+			{ id:2, label: "Code a todo list", done: false },
+			{ id:3, label: "Learn something else", done: false }
+		]
+	}
+  },
+  methods: {
+	addItem: function() {
+		this.todo.push({id: Math.floor(Math.random() * 9999) + 10, label: this.newitem, done: false});
+		this.newitem = '';
+	},
+	markAsDoneOrUndone: function(item) {
+		item.done = !item.done;
+	},
+	deleteItemFromList: function(item) {
+		let index = this.todo.indexOf(item)
+		this.todo.splice(index, 1);
+	},
+	clickontoogle: function(active) {
+		this.sortByStatus = active;
+	}
+},
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss" scoped>
+* {
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+}
+html, body {
+	background:#f7f1f1;
+	font-size:1.1rem;
+	font-family:'Quicksand', sans-serif;
+	height:100%;
+}
+@keyframes strikeitem {
+	to { width:calc(100% + 1rem); }
+}
+
+#todolist {
+	margin:4rem auto;
+	padding:2rem 3rem 3rem;
+	max-width:500px;
+	background:#FF6666;
+	color:#FFF;
+	box-shadow:-20px -20px 0px 0px rgba(100,100,100,.1);
+	h1 {
+		font-weight:normal;
+		font-size:2.6rem;
+		letter-spacing:0.05em;
+		border-bottom:1px solid rgba(255,255,255,.3);
+		span {
+			display:block;
+			font-size:0.8rem;
+			margin-bottom:0.7rem;
+			margin-left:3px;
+			margin-top:0.2rem;   
+		}
+	}
+	.emptylist {
+		margin-top:2.6rem;
+		text-align:center;
+		letter-spacing:.05em;
+		font-style:italic;
+		opacity:0.8;
+		
+	}
+	ul {
+		margin-top:2.6rem;
+		list-style:none;
+	}
+	.todolist-move {
+		transition: transform 1s;
+	}
+	li {
+		display:flex;
+		margin:0 -3rem 4px;
+		padding:1.1rem 3rem;
+		justify-content:space-between;
+		align-items:center;
+		background:rgba(255,255,255,0.1);
+	}
+	.actions {
+		flex-shrink:0;
+		padding-left:0.7em;
+	}
+	.label {
+		position:relative;
+		transition:opacity .2s linear;
+	}
+	.done {
+		.label {
+			opacity:.6;
+			&:before {
+				content:'';
+				position:absolute;
+				top:50%;
+				left:-.5rem;
+				display:block;
+				width:0%;
+				height:1px;
+				background:#FFF;
+				animation:strikeitem .3s ease-out 0s forwards;
+			}
+		}
+	}
+	.btn-picto {
+		border:none;
+		background:none;
+		-webkit-appearance:none;
+		cursor:pointer;
+		color:#FFF;
+	}
+}
+
+form {
+	margin-top:3rem;
+	display:flex;
+	flex-wrap:wrap;
+	label {
+		min-width:100%;
+		margin-bottom:.5rem;
+		font-size:1.3rem;
+	}
+	input {
+		flex-grow:1;
+		border:none;
+		background:#f7f1f1;
+		padding:0 1.5em;
+		font-size:initial;
+	}
+	button {
+		padding:0 1.3rem;
+		border:none;
+		background:#FF6666;
+		color:white;
+		text-transform:uppercase;
+		font-weight:bold;
+		border:1px solid rgba(255,255,255,.3);
+		margin-left:5px;
+		cursor:pointer;
+		transition:background .2s ease-out;
+		&:focus {
+			outline: none;
+		}
+		&:hover {
+			background:#FF5E5E;
+		}
+	}
+	input, button {
+		font-family:'Quicksand', sans-serif;
+		height:3rem;
+	}
+}
+
+button {
+	&:focus {
+		outline: none;
+	}
+}
+
+
+</style>
