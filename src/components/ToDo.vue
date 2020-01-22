@@ -7,13 +7,13 @@
 
 	<div v-if="todo.length">
 		<transition-group name="todolist" tag="ul">
-			<li v-for="item in todo" v-bind:class="item.done ? 'done' : ''" v-bind:key="item.id">
+			<li v-for="item in todo" :class="item.done ? 'done' : ''" :key="item.id">
 				<span class="label">{{item.label}}</span>
 				<div class="actions">
-					<button class="btn-picto" type="button" v-on:click="markAsDoneOrUndone(item)" v-bind:aria-label="item.done ? 'Undone' : 'Done'" v-bind:title="item.done ? 'Undone' : 'Done'">
+					<button class="btn-picto" type="button" @click="markAsDoneOrUndone(item)">
 						<i aria-hidden="true" class="material-icons">{{ item.done ? 'check_box' : 'check_box_outline_blank' }}</i>
 					</button>
-					<button class="btn-picto" type="button" v-on:click="deleteItemFromList(item)" aria-label="Delete" title="Delete">
+					<button class="btn-picto" type="button" @click="deleteItemFromList(item)">
 						<i aria-hidden="true" class="material-icons">delete</i>
 					</button>
 				</div>
@@ -22,7 +22,7 @@
 	</div>
 	<p v-else class="emptylist">Sua lista está vazia</p>
 
-	<form name="newform" v-on:submit.prevent="addItem">
+	<form name="newform" @submit.prevent="addItem">
 		<label for="newitem">Adicionar item a lista de tarefas</label>
 		<input type="text" name="newitem" id="newitem" v-model="newitem">
 		<button type="submit">Adicionar</button>
@@ -32,41 +32,37 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  },
-  data() {
-	return {
-		newitem:'',
-		sortByStatus:false,
-		todo: [
-			{ id:1, label: "Learn VueJs", done: true },
-			{ id:2, label: "Code a todo list", done: false },
-			{ id:3, label: "Learn something else", done: false }
-		]
+	name: 'ToDo',
+	data() {
+		return {
+			newitem:'',
+			sortByStatus:false,
+			todo: [
+				{ id:1, label: "Learn VueJs", done: true },
+				{ id:2, label: "Code a todo list", done: false },
+				{ id:3, label: "Learn something else", done: false }
+			]
+		}
+	},
+	methods: {
+		addItem: function() {
+			this.todo.push({id: Math.floor(Math.random() * 9999) + 10, label: this.newitem, done: false});
+			this.newitem = '';
+		},
+		markAsDoneOrUndone: function(item) {
+			item.done = !item.done;
+		},
+		deleteItemFromList: function(item) {
+			let index = this.todo.indexOf(item)
+			this.todo.splice(index, 1);
+		},
+		clickontoogle: function(active) {
+			this.sortByStatus = active;
+		}
 	}
-  },
-  methods: {
-	addItem: function() {
-		this.todo.push({id: Math.floor(Math.random() * 9999) + 10, label: this.newitem, done: false});
-		this.newitem = '';
-	},
-	markAsDoneOrUndone: function(item) {
-		item.done = !item.done;
-	},
-	deleteItemFromList: function(item) {
-		let index = this.todo.indexOf(item)
-		this.todo.splice(index, 1);
-	},
-	clickontoogle: function(active) {
-		this.sortByStatus = active;
-	}
-},
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 * {
 	margin:0;
